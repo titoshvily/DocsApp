@@ -1,0 +1,86 @@
+/* Основные стили */
+body {
+    font-family: 'Arial', sans-serif;
+    background: rgb(150, 184, 212);
+    color: #1a202c;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Контейнер */
+.menu-container {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 400px;
+    transition: 0.3s;
+}
+
+/* Заголовок */
+.menu-container h1 {
+    font-size: 2rem;
+    color: #2b6cb0;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Поля формы */
+.form-group {
+    margin: 12px 0;
+}
+
+
+/* Логотип */
+.logo {
+    position: fixed;
+
+    right: 0;
+    top: 0;
+    margin: 30px;
+
+}
+
+.logo img {
+
+    width: 300px;
+    height: auto;
+    display: block;
+
+}
+
+
+
+/* Кнопки */
+button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    background: linear-gradient(135deg, #54a068, #265c29);
+    color: white;
+    box-shadow: 0 5px 15px rgba(86, 177, 121, 0.3);
+    outline: none;
+}
+
+/* Эффект наведения */
+button:hover {
+    background: linear-gradient(135deg, #45a049, #2e7d32);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+}
+
+/* Эффект нажатия */
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 5px 10px rgba(76, 175, 80, 0.3);
+}

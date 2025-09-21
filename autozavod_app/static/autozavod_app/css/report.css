@@ -1,0 +1,212 @@
+/* Основные стили */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h1,
+h2,
+h3 {
+    color: #2c3e50;
+}
+
+h1 {
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+/* Секции отчетов */
+.report-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    border-left: 4px solid #3498db;
+}
+
+/* Информационная секция */
+.info-section {
+    margin-top: 30px;
+    padding: 15px;
+    background: #e8f4fc;
+    border-radius: 5px;
+    border-left: 4px solid #2980b9;
+}
+
+.info-section ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.info-section li {
+    margin-bottom: 8px;
+}
+
+/* Формы */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Кнопки */
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.menu-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu-button:hover {
+    background-color: #2980b9;
+}
+
+.menu-button i {
+    font-size: 16px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    .menu-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Дополнительные стили для новых элементов */
+.employee-select-section {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+}
+
+.status-message {
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    background-color: #e8f4fc;
+    border-left: 4px solid #3498db;
+}
+
+/* Иконки */
+.fa-info-circle {
+    color: #3498db;
+    margin-right: 8px;
+}
+
+/* Добавьте это в ваш report.css */
+.form-control {
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#employee {
+    height: auto;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#employee option {
+    padding: 5px;
+}
+
+#employee option[style*="none"] {
+    display: none;
+}
+
+.suggestions-container {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: calc(100% - 30px);
+    /* Подгоняем под ширину поля ввода */
+}
+
+.suggestion-item {
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.form-group {
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #3e69c0;
+    /* Зеленый цвет кнопки */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #334ed1;
+    /* Более темный зеленый при наведении */
+}

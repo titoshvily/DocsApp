@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все документы</title>
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/detail_info.css' %}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='{% url 'show_doc' %}'">Назад</button>
+    
+    
+    
+
+    <header class="header">
+        <h1>Меню документов</h1>
+    </header>
+
+    <main>  
+        <section class="order-info">
+            <h2>{{ doc.name }}</h2>
+            <div class="info-container">
+                <div class="actual">
+                    {% if doc.actual == "Y" %}
+                        <span class="status-text actual">Актуален</span>
+                    {% else %}
+                        <span class="status-text not-actual">Не актуален</span>
+                    {% endif %}
+                </div>
+                <div class="status">
+                    {% if doc.status == "Y" %}
+                        <span class="status-text active">Действующий</span>
+                    {% else %}
+                        <span class="status-text inactive">Архив</span>
+                    {% endif %}
+                </div>
+                    {% if doc.link %}
+                    <a href="{{ doc.link.url }}" target="_blank" class="btn-pred">Предпросмотр файла</a>
+                    {% else %}
+                    <p>Файл не загружен</p>
+                    {% endif %}
+                    <!-- Добавьте кнопку редактирования -->
+                    <a href="{% url 'edit_doc' doc.id %}" class="edit-button">
+                        <i class="fas fa-pencil-alt"></i> Редактировать
+                    </a>
+                
+            </div>
+        </section>
+
+        <section class="details">
+            <div class="id_doc">
+                <h3>id приказа</h3>
+                <p class="value">{{ doc.id_doc }}</p>
+            </div>
+            <div class="workshop">
+                <h3>Цех</h3>
+                {% for workshop in doc.workshop.all %}
+                <p>{{ workshop }}</p>
+                {% endfor %}
+            </div>
+            <div class="group">
+                <h3>Направление</h3>
+                <p>{{ doc.get_group_display }}</p>
+            </div>
+            <div class="evp_class">
+                <h3>Группа ознакомления</h3>
+                {% for evp_class in doc.evp_class.all %}
+                <p>{{ evp_class }}</p>
+                {% endfor %}
+            </div>
+            <div class="date">
+                <h3>Дата выпуска:</h3>
+                <p>{{ doc.date|date:"d.m.Y" }}</p>
+            </div>
+            {% if doc.comment %}
+            <div class="comment">
+                <h3>Комментарий:</h3>
+                <p>{{ doc.comment }}</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class='details'>
+            <h3 class='status-details'>Статусы выполнения</h3>
+            
+            <div>
+                <h3>Ознакомление с приказом:</h3>
+                {% if doc.responsible_not.all %}
+                    <span class="process-false">Не выполнено</span>
+                {% else %}
+                    <span class="process-true">Выполнено</span>
+                {% endif %}
+            </div>
+        
+            <div>
+                <h3>Действия по приказу:</h3>
+                {% if all_completed_process %}
+                    <span class="process-true">Выполнено</span>
+                {% else %}
+                    <span class="process-false">Не выполнено</span>
+                {% endif %}
+            </div>
+            
+            <div>
+                <h3>Ознакомление с распоряжением:</h3>
+                {% if all_responsible_acquainted_orders %}
+                    <span class="process-true">Выполнено</span>
+                {% else %}
+                    <span class="process-false">Не выполнено (есть не ознакомленные сотрудники)</span>
+                {% endif %}
+            </div>
+            
+            <div>
+                <h3>Действия по распоряжению:</h3>
+                {% if all_completed_process_orders %}
+                    <span class="process-true">Выполнено</span>
+                {% else %}
+                    <span class="process-false">Не выполнено (есть невыполненные действия)</span>
+                {% endif %}
+            </div>
+
+            <div>
+                <h3>Ответственные за приказ:</h3>
+                {% for employee in doc.mayor.all %}
+                <ol>{{ employee.name }} , {{employee.id_number}};</ol>
+                {% endfor %}
+                
+            </div>
+        
+            
+        </section>
+
+        <section class="details">
+            <h3>Ознакомление сотрудников</h3>
+            <div class="employee-list">
+                <div class="not-acquainted">
+                    <h4>Не ознакомлены:</h4>
+                    <ul>
+                        {% for employee in doc.responsible_not.all %}
+                            <li>{{ employee.name }} "{{employee.id_number}}"
+                                <button onclick="acquaintEmployee({{ employee.id }}, {{ doc.id }})">Ознакомить</button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="acquainted">
+                    <h4>Ознакомлены:</h4>
+                    <span>
+                        {% for employee in doc.responsible.all %}
+                            <li>{{ employee.name }} 
+                                <button onclick="unacquaintEmployee({{ employee.id }}, {{ doc.id }})">Отменить ознакомление</button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <button onclick="acquaintAll({{ doc.id }})">Ознакомить всех</button>
+            <button onclick="unacquaintAll({{ doc.id }})">Отменить ознакомление всех</button>
+            <script src="{% static 'autozavod_app/js/employee.js' %}"></script>
+
+            
+        </section>
+
+        
+    
+        <footer class="actions">
+            <h3 class='actions_head'>Список действий</h3>
+        
+            {% if doc.process.count %}
+        
+            <ul>
+                {% for process in doc.process.all %}
+                <div class="process_span">
+                    <span>{{ process.release_date|date:"d.m.Y" }}</span>
+                    {% for action in process.action.all %}
+                        <span>{{ action }}</span>
+                    {% endfor %}
+                    <span>{{ process.type }}</span>
+                    <span>{{ process.name_doc }}</span>
+                    {% for action in process.responsible_process.all %}
+                        <span>{{ action }}</span>
+                    {% endfor %}
+                    <span>{{ process.date_deadline|date:"d.m.Y" }}</span>
+                    
+                    <span>
+                        <input type="checkbox" class="status-checkbox" data-process-id="{{ process.id }}" 
+                               {% if process.status_procces %} checked {% endif %}>
+                        {% if process.status_procces %}
+                            <span class='process-true'>Выполнен</span>
+                        {% else %}
+                            <span class='process-false'>Требует действий</span>
+                        {% endif %}
+                    </span>
+                    <span>{{ process.comment }}</span>
+                    
+                            {% if process.link %}
+                           <span><a href="{{ process.link.url }}" download class="btn btn-download">Скачать</a> </span> 
+                        {% else %}
+                            <span class="btn btn-disabled">Файл отсутствует</span>
+                        {% endif %}
+                    
+                    
+                    <button class="delete-process-btn" data-process-id="{{ process.id }}" onclick="confirmDelete({{ process.id }})">
+                        Удалить
+                    </button>
+        
+                </div>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>Нет действий для данного документа. </p>
+        
+            {% endif %}
+            <button id="add-process-btn" class="add-process-btn" onclick="window.location.href='{% url 'add_process' doc.id %}'">
+                Добавить действие
+            </button>
+        </footer>    
+        
+
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <p>Вы уверены, что хотите удалить этот процесс?</p>
+                <button id="confirmDeleteBtn">Да, удалить</button>
+                <button id="cancelDeleteBtn">Отмена</button>
+            </div>
+        </div>
+
+        <script src="{% static 'autozavod_app/js/delete_process.js' %}"></script>
+        
+
+    </footer>
+
+
+
+    <footer class="actions">
+        {% if doc.orders.all %}
+            <h3 class="orders-heading">Распоряжения по документу</h3>
+            
+                {% for order in doc.orders.all %}
+                <ul>
+                    <div class="process_span">
+                        <a href="{% url 'order_detail' order.id %}">{{ order.name }}</a>
+                        <span>Дата: {{ order.release_date|date:"d.m.Y" }}</span>
+                        {% for employee in order.responsible_not.all %}
+                            <span>{{ employee.name }}</span>
+                        {% endfor %}
+                        {% for employee in order.responsible.all %}
+                            <span>{{ employee.name }}</span>
+                        {% endfor %}
+                        {% if order.link %}
+                            <a href="{{ order.link.url }}" download class="btn btn-download">Скачать</a>
+                        {% else %}
+                            <span class="btn btn-disabled">Файл отсутствует</span>
+                        {% endif %}
+                   </div>
+                {% endfor %}
+            </ul>
+            
+        {% else %}
+            <p>Нет распоряжений для данного документа.</p>
+        {% endif %}
+        
+        <!-- Кнопка для добавления нового распоряжения -->
+        <button id="add-order-btn" class="add-process-btn" onclick="window.location.href='{% url 'add_order' doc.id %}'">
+            Добавить распоряжение
+        </button>
+    </footer>
+
+       
+
+        
+        
+        
+
+        
+        
+    </main>
+    
+</body>
+
+</html>

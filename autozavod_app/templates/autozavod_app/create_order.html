@@ -1,0 +1,391 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание распоряжения</title>
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/create.css' %}">
+    <style>
+        #selectedEmployeesModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        #selectedEmployeesList {
+            padding-left: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        #selectedEmployeesList li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f5f5f5;
+            border-radius: 3px;
+        }
+        
+        .preview-btn {
+            margin: 10px 0;
+            padding: 8px 15px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        #loader {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: yellow;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body class="page-body">
+
+    <div class="button-container">
+        <a href="{% url 'create_doc' %}" class="btn btn-custom">Создать новый документ</a>
+        <a href="{% url 'main' %}" class="btn btn-custom">Выйти в главное меню</a>
+    </div>
+
+    <div class="container">
+        <h1 class="title">Создание нового распоряжения (отдельное)</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Скрытое поле для responsible_not -->
+            <div style="display: none;">
+                {{ form.responsible_not }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_name">Название:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="id_id_doc">Номер документа:</label>
+                {{ form.id_doc }}
+            </div>
+            <div class="form-group">
+                <label for="id_workshop">Цех:</label>
+                {{ form.workshop }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.type_doc.id_for_label }}">Направление:</label>
+                {{ form.group }}
+            </div>
+            <div class="form-group">
+                <label for="id_evp_class">Группа ознакомления:</label>
+                {{ form.evp_class }}
+                <a href="{% url 'admin:autozavod_app_evp_class_add' %}" class="add-btn-plus" target="_blank">+</a>
+                <button type="button" id="previewBtn" class="preview-btn">Просмотреть выбранных сотрудников</button>
+            </div>
+            <div class="form-group">
+                <label for="search-employees">Поиск сотрудников:</label>
+                <input type="text" id="search-employees" class="form-control" placeholder="Введите имя...">
+                <label for="{{ form.mayor.id_for_label }}">Ответственные:</label>
+                {{ form.mayor }}
+                <a href="{% url 'admin:autozavod_app_stuff_add' %}" class="btn btn-custom" target="_blank">Добавить нового сотрудника</a>
+            </div>
+            <div class="form-group">
+                <label for="id_release_date">Дата выпуска:</label>
+                {{ form.release_date }}
+            </div>
+            <div class="form-group">
+                <label for="id_link">Загрузка документа:</label>
+                {{ form.link }}
+            </div>
+            <div class="document-buttons">
+                <button type="submit" class="btn btn-details">Создать</button>
+                <a href="{% url 'success' %}" class="btn btn-download">Отмена</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Модальное окно для отображения выбранных сотрудников -->
+    <div id="selectedEmployeesModal">
+        <h3 style="margin-top:0;">Сотрудники для ознакомления:</h3>
+        <div style="margin-bottom:10px;">
+            <strong>Всего:</strong> <span id="employeesCount">0</span>
+            <br>
+            <strong>Из них выбраны вручную:</strong> <span id="manualSelectedCount">0</span>
+        </div>
+        <ul id="selectedEmployeesList"></ul>
+        <button id="closeModalBtn" style="margin-top:15px; padding:5px 15px; background:#4CAF50; color:white; border:none; border-radius:3px; cursor:pointer;">
+            Закрыть
+        </button>
+    </div>
+    <div id="modalOverlay"></div>
+
+    <script>
+        // Функция для обновления поля responsible_not
+        function updateResponsibleNotField(employeeIds, manuallySelectedIds = []) {
+            try {
+                const responsibleNotField = document.getElementById("id_responsible_not");
+                if (!responsibleNotField) {
+                    throw new Error("Поле responsible_not не найдено");
+                }
+                
+                // Сбрасываем текущий выбор
+                for (let option of responsibleNotField.options) {
+                    option.selected = false;
+                }
+                
+                // Устанавливаем новый выбор
+                employeeIds.forEach(id => {
+                    const option = responsibleNotField.querySelector(`option[value="${id}"]`);
+                    if (option) {
+                        option.selected = true;
+                    }
+                });
+                
+                console.log(`Обновлено поле responsible_not: выбрано ${employeeIds.length} сотрудников`);
+                
+            } catch (error) {
+                console.error("Ошибка при обновлении поля:", error);
+            }
+        }
+
+        // Основная функция для обновления списка ответственных
+        async function updateResponsibleNot() {
+            try {
+                const workshopSelect = document.getElementById("id_workshop");
+                const evpClassSelect = document.getElementById("id_evp_class");
+                const mayorSelect = document.getElementById("id_mayor");
+                
+                if (!workshopSelect || !evpClassSelect || !mayorSelect) {
+                    console.error("Не найдены необходимые элементы формы");
+                    return;
+                }
+                
+                const workshopIds = Array.from(workshopSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(id => id !== '');
+                
+                const evpClassIds = Array.from(evpClassSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(id => id !== '');
+                
+                // Получаем выбранных в mayor сотрудников
+                const mayorSelected = Array.from(mayorSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(id => id !== '');
+                
+                // Всегда добавляем выбранных в mayor
+                let allSelectedEmployees = [...mayorSelected];
+                
+                // Если выбраны цех и группа - добавляем сотрудников по фильтру
+                if (workshopIds.length > 0 && evpClassIds.length > 0) {
+                    showLoader(true);
+                    
+                    const response = await fetch(
+                        `{% url 'get_employees_by_filters' %}?workshop_ids=${workshopIds.join(',')}&evp_class_ids=${evpClassIds.join(',')}`
+                    );
+                    
+                    if (!response.ok) {
+                        throw new Error(`Ошибка сервера: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Объединяем обе группы сотрудников, исключая дубликаты
+                    allSelectedEmployees = [...new Set([...allSelectedEmployees, ...data.employees])];
+                }
+                
+                // Обновляем поле responsible_not
+                updateResponsibleNotField(allSelectedEmployees, mayorSelected);
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert(`Ошибка при обновлении списка: ${error.message}`);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // Функция для отображения списка сотрудников в модальном окне
+        async function showSelectedEmployees() {
+            try {
+                const responsibleNotField = document.getElementById("id_responsible_not");
+                const mayorSelect = document.getElementById("id_mayor");
+                
+                if (!responsibleNotField || !mayorSelect) {
+                    throw new Error("Не найдены необходимые элементы формы");
+                }
+                
+                // Получаем выбранные ID
+                const selectedIds = Array.from(responsibleNotField.selectedOptions)
+                    .map(option => option.value)
+                    .filter(id => id !== '');
+                
+                const manualSelectedIds = Array.from(mayorSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(id => id !== '');
+                
+                if (selectedIds.length === 0) {
+                    alert("Нет выбранных сотрудников");
+                    return;
+                }
+                
+                showLoader(true);
+                
+                // Получаем полную информацию о выбранных сотрудниках
+                const response = await fetch(
+                    `{% url 'get_employees_by_filters' %}?employee_ids=${selectedIds.join(',')}&full_info=true`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Обновляем счетчики
+                document.getElementById("employeesCount").textContent = selectedIds.length;
+                document.getElementById("manualSelectedCount").textContent = manualSelectedIds.length;
+                
+                // Заполняем список
+                const employeesList = document.getElementById("selectedEmployeesList");
+                employeesList.innerHTML = '';
+                
+                if (data.employees_info && data.employees_info.length > 0) {
+                    data.employees_info.forEach(employee => {
+                        const li = document.createElement('li');
+                        li.style.marginBottom = '5px';
+                        li.style.padding = '5px';
+                        li.style.backgroundColor = '#f5f5f5';
+                        li.style.borderRadius = '3px';
+                        
+                        li.textContent = `${employee.name} (${employee.position})`;
+                        
+                        // Помечаем сотрудников, выбранных вручную
+                        if (manualSelectedIds.includes(employee.id.toString())) {
+                            li.innerHTML += ' <span style="color:green; font-weight:bold;">(выбран вручную)</span>';
+                        }
+                        
+                        employeesList.appendChild(li);
+                    });
+                } else {
+                    employeesList.innerHTML = '<li>Информация о сотрудниках не найдена</li>';
+                }
+                
+                // Показываем модальное окно
+                document.getElementById("selectedEmployeesModal").style.display = 'block';
+                document.getElementById("modalOverlay").style.display = 'block';
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert(`Ошибка при загрузке данных: ${error.message}`);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // Функция для показа/скрытия индикатора загрузки
+        function showLoader(show) {
+            const loader = document.getElementById('loader') || 
+                          document.createElement('div');
+            loader.id = 'loader';
+            loader.textContent = 'Загрузка...';
+            loader.style.position = 'fixed';
+            loader.style.top = '10px';
+            loader.style.right = '10px';
+            loader.style.padding = '5px 10px';
+            loader.style.background = 'yellow';
+            loader.style.zIndex = '1001';
+            
+            if (show) {
+                document.body.appendChild(loader);
+            } else {
+                if (document.getElementById('loader')) {
+                    document.body.removeChild(loader);
+                }
+            }
+        }
+
+        // Инициализация после загрузки страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Поиск сотрудников
+            document.getElementById("search-employees").addEventListener("input", function() {
+                let query = this.value.toLowerCase();
+                let options = document.getElementById("id_mayor").options;
+        
+                for (let option of options) {
+                    let text = option.text.toLowerCase();
+                    option.style.display = text.includes(query) ? "block" : "none";
+                }
+            });
+            
+            // Получаем элементы
+            const workshopSelect = document.getElementById("id_workshop");
+            const evpClassSelect = document.getElementById("id_evp_class");
+            const mayorSelect = document.getElementById("id_mayor");
+            const previewBtn = document.getElementById("previewBtn");
+            const closeModalBtn = document.getElementById("closeModalBtn");
+            const modalOverlay = document.getElementById("modalOverlay");
+            
+            // Добавляем обработчики изменений
+            if (workshopSelect) workshopSelect.addEventListener("change", updateResponsibleNot);
+            if (evpClassSelect) evpClassSelect.addEventListener("change", updateResponsibleNot);
+            if (mayorSelect) mayorSelect.addEventListener("change", updateResponsibleNot);
+            
+            // Обработчик кнопки предпросмотра
+            if (previewBtn) {
+                previewBtn.addEventListener("click", showSelectedEmployees);
+            }
+            
+            // Обработчики закрытия модального окна
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener("click", function() {
+                    document.getElementById("selectedEmployeesModal").style.display = 'none';
+                    modalOverlay.style.display = 'none';
+                });
+            }
+            
+            if (modalOverlay) {
+                modalOverlay.addEventListener("click", function() {
+                    document.getElementById("selectedEmployeesModal").style.display = 'none';
+                    this.style.display = 'none';
+                });
+            }
+            
+            // Первоначальное обновление
+            updateResponsibleNot();
+        });
+    </script>
+</body>
+</html>

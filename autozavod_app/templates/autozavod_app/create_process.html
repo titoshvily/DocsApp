@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание документа</title>
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/create.css' %}">
+</head>
+<body class="page-body">
+    
+    <button class="back-button" onclick="history.back()">Назад</button>
+    
+    <div class="container">
+        <h1 class="title">Создание нового процесса</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name">Действие:</label>
+                {{ form.action }}
+                <a href="{% url 'admin:autozavod_app_typedoc_add' %}" class="add-btn-plus" target="_blank">+</a>
+            </div>
+            <div class="form-group">
+                <label for="id_id_doc">Тип документа:</label>
+                {{ form.type }}
+                <a href="{% url 'admin:autozavod_app_typedoc_add' %}" class="add-btn-plus" target="_blank">+</a>
+            </div>
+            <div class="form-group">
+                <label for="id_workshop">Название:</label>
+                {{ form.name_doc }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.type_doc.id_for_label }}">Срок выполнения действия:</label>
+                {{ form.date_deadline }}
+            </div>
+            <div class="form-group">
+                <label for="id_release_date">Дата выпуска:</label>
+                {{ form.release_date }}
+            </div>
+            <div class="form-group">
+                <label for="id_release_date">Комментарий:</label>
+                {{ form.comment }}
+            </div>
+            <div class="form-group">
+                <label for="search-employees">Поиск сотрудников:</label>
+                <input type="text" id="search-employees" class="form-control" placeholder="Введите имя...">
+                <label for="{{ form.responsible_process.id_for_label }}">Ответственные:</label>
+                {{ form.responsible_process }}
+                <a href="{% url 'admin:autozavod_app_stuff_add' %}" class="btn btn-custom" target="_blank">Добавить нового сотрудника</a>
+            </div>
+            <div class="form-group">
+                <label for="id_link">Загрузка документа:</label>
+                {{ form.link }}
+            </div>
+            <div class="document-buttons">
+                <button type="submit" class="btn btn-details">Создать</button>
+                <a href="{% url 'success' %}" class="btn btn-download">Отмена</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("search-employees").addEventListener("input", function() {
+            let query = this.value.toLowerCase();
+            let options = document.getElementById("id_responsible_process").options;
+    
+            for (let option of options) {
+                let text = option.text.toLowerCase();
+                option.style.display = text.includes(query) ? "block" : "none";
+            }
+        });
+    </script>
+
+</body>
+</html>

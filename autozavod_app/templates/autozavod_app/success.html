@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документ создан</title>
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/success.css' %}">
+    <script>
+        // Переадресация через 10 секунд
+        setTimeout(function() {
+            window.location.href = '/'; // Переход на главное меню
+        }, 10000); // 10 секунд
+    </script>
+</head>
+<body>
+    <div class="message">Ваш документ создан</div>
+    <div class="message">Через 10 секунд произойдёт переадрессация на главную страницу</div>
+    <div class="loader">
+        <div class="circle"></div>
+    </div>
+    <div class="buttons">
+        <button onclick="window.location.href='/'">Выйти на главное меню</button>
+        <button onclick="window.location.href='/create_doc'">Выполнить ещё одну форму</button>
+    </div>
+</body>
+</html>

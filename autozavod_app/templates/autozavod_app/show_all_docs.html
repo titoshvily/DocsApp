@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все документы</title>
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/show_doc.css' %}?v=1">
+</head>
+
+<body class="page-body">
+    
+    <button class="back-button" onclick="window.location.href='http://127.0.0.1:8000'">Назад</button>
+    <button class="back-button-right" onclick="window.location.href='http://127.0.0.1:8000/orders'">Открыть список распоряжений</button>
+    
+    
+
+    
+
+    <div class="container">
+        <h1 class="title">Список всех приказов</h1>
+
+        
+
+
+        <!-- Кнопки сортировки -->
+        <div class="sort-buttons">
+            <button onclick="window.location.href='?sort_by=name'" class="sort-button {% if sort_by == 'name' %}active{% endif %}">
+                По алфавиту
+            </button>
+            <button onclick="window.location.href='?sort_by=release_date'" class="sort-button {% if sort_by == 'date' %}active{% endif %}">
+               Сбросить
+            </button>
+            <button onclick="window.location.href='?sort_by=date'" class="sort-button {% if sort_by == 'date' %}active{% endif %}">
+                По дате
+            </button>
+
+                    <input
+                type="text"
+                id="searchInput"
+                placeholder="Поиск документов..."
+                class="search-input"
+                />
+
+        </div>
+
+        {% if docs %}
+            <div class="documents-list">
+                {% for doc in docs %}
+                <div class="document-item">
+                    <span class="document-name">{{ doc.name }}</span>
+                    <span class="document-name">{{ doc.date|date:"d.m.Y" }}</span>
+                    <span class="document-name">{{ doc.id_doc }}</span>
+                    <div class="document-buttons">
+                        <a href="/docs/info/{{ doc.id }}" class="btn btn-details">Подробнее</a>
+                        <a href="{{ doc.link.url }}" target="_blank" class="btn btn-preview">Предпросмотр</a>
+                        <a href="{{ doc.link.url }}" download class="btn btn-download">Скачать</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-documents">Нет документов для выбранного цеха.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        // Функция для фильтрации документов
+        function filterDocuments() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const documentItems = document.querySelectorAll('.document-item');
+
+            documentItems.forEach(item => {
+                const docName = item.querySelector('.document-name').textContent.toLowerCase();
+                const docIdElement = item.querySelector('.document-id');
+                const docId = docIdElement ? docIdElement.textContent.toLowerCase() : '';
+                
+                // Проверяем совпадение по названию или ID
+                if (docName.includes(searchText) || docId.includes(searchText)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Добавляем обработчики событий
+        document.getElementById('searchInput').addEventListener('input', filterDocuments);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterDocuments();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+/* Основные стили для страницы редактирования */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Стили для формы */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+form label {
+    font-weight: bold;
+    color: #555;
+}
+
+form input[type="text"],
+form input[type="date"],
+form textarea,
+form select,
+form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+form select {
+    appearance: none;
+    background-color: #fff;
+}
+
+/* Стили для кнопки сохранения */
+.save-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
+/* Стили для кнопки "Назад" */
+.back-button {
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    color: #333;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background-color: #e1e1e1;
+}
+
+/* Стили для сообщений об ошибках */
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Стили для полей с ошибками */
+.error-field {
+    border-color: #dc3545 !important;
+}
+
+/* Стили для чекбоксов и радио-кнопок */
+input[type="checkbox"],
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Стили для множественного выбора (select multiple) */
+select[multiple] {
+    height: 150px;
+}
+
+/* Стили для файлового поля */
+.file-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-input input[type="file"] {
+    flex-grow: 1;
+}
+
+.file-input .file-name {
+    font-size: 14px;
+    color: #666;
+}

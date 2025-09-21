@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Формирование отчетов</title>
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/report.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="window.location.href='{% url 'main' %}'">Назад</button>
+        <h1><i class="fas fa-file-excel"></i> Формирование отчетов</h1>
+        
+        <div class="report-section">
+            <h2><i class="fas fa-industry"></i> Выбор цеха</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="buttons">
+                    <button type="submit" name="report_type" value="not_responsible" class="menu-button">
+                        <i class="fas fa-user-clock"></i> Отчет по ознакомлениям
+                    </button>
+                    <button type="submit" name="report_type" value="doc" class="menu-button">
+                        <i class="fas fa-file-signature"></i> Отчет по приказам
+                    </button>
+                    <button type="submit" name="report_type" value="order" class="menu-button">
+                        <i class="fas fa-tasks"></i> Отчет по распоряжениям
+                    </button>
+                    <button type="submit" name="report_type" value="all" class="menu-button">
+                        <i class="fas fa-file-archive"></i> Полный отчет
+                    </button>
+                    <button type="submit" name="report_type" value="non_actual" class="menu-button">
+                        <i class="fas fa-exclamation-triangle"></i> Неактуальные документы
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="report-section">
+            <h2><i class="fas fa-user-tie"></i> Отчет по сотруднику</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="employee-search">Выберите сотрудника:</label>
+                    <input type="text" 
+                           id="employee-search" 
+                           class="form-control" 
+                           placeholder="Начните вводить имя или табельный номер..."
+                           autocomplete="off">
+                    
+                    <select id="employee" name="employee" class="form-control" required style="display: none;">
+                        <option value="">-- Выберите сотрудника --</option>
+                        {% for employee in employees %}
+                            <option value="{{ employee.id }}" 
+                                    data-name="{{ employee.name }}" 
+                                    data-id="{{ employee.id_number }}">
+                                {{ employee.name }} ({{ employee.id_number }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <div id="employee-suggestions" class="suggestions-container"></div>
+                </div>
+                <button type="submit" name="report_type" value="employee" class="menu-button">
+                    <i class="fas fa-user-edit"></i> Сформировать отчет по сотруднику
+                </button>
+            </form>
+        </div>
+
+        <div class="info-section">
+            <h3><i class="fas fa-info-circle"></i> Информация об отчетах:</h3>
+            <ul>
+                <li><strong>Отчет по ознакомлениям:</strong> Список сотрудников, не ознакомившихся с документами</li>
+                <li><strong>Отчет по приказам:</strong> Невыполненные действия по приказам</li>
+                <li><strong>Отчет по распоряжениям:</strong> Невыполненные действия по распоряжениям</li>
+                <li><strong>Полный отчет:</strong> Все данные в одном файле (4 листа)</li>
+                <li><strong>Неактуальные документы:</strong> Документы с пометкой "Не актуален"</li>
+                <li><strong>Отчет по сотруднику:</strong> Все документы, связанные с выбранным сотрудником</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('employee-search');
+            const selectElement = document.getElementById('employee');
+            const suggestionsContainer = document.getElementById('employee-suggestions');
+            
+            // Показываем подсказки при фокусе
+            searchInput.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    filterSuggestions(this.value);
+                }
+            });
+            
+            // Фильтрация и отображение подсказок
+            searchInput.addEventListener('input', function() {
+                filterSuggestions(this.value);
+            });
+            
+            // Выбор сотрудника из подсказок
+            suggestionsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('suggestion-item')) {
+                    const employeeId = e.target.getAttribute('data-value');
+                    const employeeText = e.target.textContent;
+                    
+                    // Устанавливаем выбранное значение
+                    selectElement.value = employeeId;
+                    searchInput.value = employeeText;
+                    
+                    // Скрываем подсказки
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Скрываем подсказки при клике вне поля
+            document.addEventListener('click', function(e) {
+                if (e.target !== searchInput && e.target !== suggestionsContainer) {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            function filterSuggestions(query) {
+                query = query.toLowerCase();
+                const options = selectElement.querySelectorAll('option');
+                suggestionsContainer.innerHTML = '';
+                
+                if (query.length === 0) {
+                    suggestionsContainer.style.display = 'none';
+                    return;
+                }
+                
+                let hasMatches = false;
+                
+                options.forEach(option => {
+                    if (option.value && 
+                        (option.textContent.toLowerCase().includes(query) || 
+                         option.getAttribute('data-id').toString().includes(query))) {
+                        
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.className = 'suggestion-item';
+                        suggestionItem.textContent = option.textContent;
+                        suggestionItem.setAttribute('data-value', option.value);
+                        suggestionsContainer.appendChild(suggestionItem);
+                        hasMatches = true;
+                    }
+                });
+                
+                suggestionsContainer.style.display = hasMatches ? 'block' : 'none';
+            }
+        });
+        </script>
+</body>
+</html>

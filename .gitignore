@@ -1,0 +1,9 @@
+/venv
+/media
+.env
+.env.*
+!.env.example
+.env.local
+.env.production
+.env.dev
+.env.test

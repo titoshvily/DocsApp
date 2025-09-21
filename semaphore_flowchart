@@ -1,0 +1,41 @@
+// Блок-схема работы с семафором
+digraph {
+	rankdir=TB size="10,10"
+	start [label="Начало" color=green shape=ellipse]
+	input_n [label="Ввод N
+(0-7)" color=blue shape=parallelogram]
+	input_m [label="Ввод M
+(0-7)" color=blue shape=parallelogram]
+	input_l [label="Ввод L
+(0/1)" color=blue shape=parallelogram]
+	input_w [label="Ввод W
+(0-511)" color=blue shape=parallelogram]
+	pack [label="Упаковка в sem.value
+(N<<13 | M<<10 | L<<9 | W)" color=pink shape=box]
+	hex_out [label="Вывод hex-значения" color=pink shape=box]
+	unpack [label="Распаковка и вывод значений" color=pink shape=box]
+	end [label="Конец" color=red shape=ellipse]
+	start -> input_n
+	input_n -> input_m
+	input_m -> input_l
+	input_l -> input_w
+	input_w -> pack
+	pack -> hex_out
+	hex_out -> unpack
+	unpack -> end
+	input_n -> check_n [style=invis]
+	input_m -> check_m [style=invis]
+	input_l -> check_l [style=invis]
+	input_w -> check_w [style=invis]
+	{
+		rank=same
+		check_n [label="" style=invis]
+		check_m [label="" style=invis]
+		check_l [label="" style=invis]
+		check_w [label="" style=invis]
+	}
+	check_n -> input_n [label="Неверный ввод" style=dashed]
+	check_m -> input_m [label="Неверный ввод" style=dashed]
+	check_l -> input_l [label="Неверный ввод" style=dashed]
+	check_w -> input_w [label="Неверный ввод" style=dashed]
+}

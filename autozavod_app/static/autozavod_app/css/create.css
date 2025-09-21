@@ -1,0 +1,287 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: rgb(150, 184, 212);
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333333;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.document-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-details {
+    background-color: #3e96f4;
+}
+
+.btn-download {
+    background-color: #dc3545;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Контейнер кнопки */
+.btn-custom {
+    background-color: #439eee;
+    /* Зеленый фон */
+    color: #fff;
+    /* Белый текст */
+    padding: 8px 16px;
+    /* Уменьшенные отступы внутри кнопки */
+    font-size: 14px;
+    /* Уменьшенный размер текста */
+    font-weight: bold;
+    /* Жирный текст */
+    text-decoration: none;
+    /* Убираем подчеркивание */
+    border-radius: 8px;
+    /* Скругленные углы */
+    border: none;
+    /* Без границ */
+    transition: background-color 0.3s ease;
+    /* Анимация при наведении */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Тень под кнопкой */
+    cursor: pointer;
+    /* Указатель мыши */
+}
+
+/* Эффект при наведении */
+.btn-custom:hover {
+    background-color: #238ce2;
+    /* Темно-зеленый при наведении */
+}
+
+/* Контейнер кнопок */
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    /* Выравниваем кнопки справа */
+    margin: 10px;
+    /* Отступ вокруг контейнера */
+    gap: 10px;
+    /* Отступ между кнопками */
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #3e69c0;
+    /* Зеленый цвет кнопки */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #334ed1;
+    /* Более темный зеленый при наведении */
+}
+
+#employee-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+#employee-results {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#employee-results div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+#employee-results div:hover {
+    background-color: #f0f0f0;
+}
+
+#employee-results {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.employee-item {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.employee-item:hover {
+    background-color: #f0f0f0;
+}
+
+.employee-name {
+    font-weight: bold;
+}
+
+.employee-position {
+    color: #666;
+    margin-left: 10px;
+}
+
+
+/* static/css/add_button.css */
+.add-btn-plus {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #3e69c0; /* Зелёный цвет */
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    border-radius: 50%;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease; /* Плавное изменение цвета при наведении */
+}
+
+.add-btn-plus:hover {
+    background: #334ed1; /* Тёмно-зелёный при наведении */
+    cursor: pointer;
+}
+
+
+/* Стили для модального окна */
+#selectedEmployeesModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 1000;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+#selectedEmployeesList {
+    padding-left: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#selectedEmployeesList li {
+    margin-bottom: 5px;
+    padding: 5px;
+    background: #f5f5f5;
+    border-radius: 3px;
+}
+
+.preview-btn {
+    margin: 10px 0;
+    padding: 8px 15px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Индикатор загрузки */
+#loader {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background: yellow;
+    z-index: 1001;
+}

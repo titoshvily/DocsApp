@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'autozavod_app/css/menu.css' %}">
+    <title>Главное меню</title>
+</head>
+<body>
+    <div class="menu-container">
+        <h1 class="menu-title">Главное меню</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-group">
+                <button class="menu-button">🔍 Найти документ</button>
+            </div>
+        </form>
+
+        <div class="form-group">
+            <button class="menu-button" onclick="location.href='docs'">📁 Все документы</button>
+        </div>
+        <div class="form-group">
+            <button class="menu-button" onclick="location.href='create_doc'">📝 Создать документ</button>
+        </div>
+        <div class="form-group">
+            <button class="menu-button" onclick="window.location.href='report'">Сформировать отчёт-замечаний</button>
+        </div>
+        <div class="form-group">
+            <button class="menu-button settings" onclick="location.href='admin'">⚙️ Настройки</button>
+        </div>
+        <div class='logo'>
+            <img src="{% static 'autozavod_app/img/logo.png' %}" alt="Логотип">
+        </div>
+    </div>
+</body>
+</html>
