@@ -1,118 +1,49 @@
- 📄 DocsApp — система учёта документации
+# 📄 DocsApp - Documentation Management System
 
- — это веб-приложение на Django для учёта документов, распоряжений и связанных процессов на предприятии.
-Проект был реализован за 3 месяца в рамках проектной стажировки и покрывает полный цикл работы с документацией: от создания и редактирования до формирования отчётов в формате Excel.
+A Django web application for managing documents, orders, and related processes in an enterprise environment. This pet project was developed as a 3-month internship project and covers the full documentation lifecycle from creation and editing to Excel report generation.
 
- Возможности
+## ✨ Features
 
- ✅ Управление цехами и документами:
+### 📋 Document & Order Management
+- Create, edit, and delete documents and orders
+- Associate with workshops, document types, and employees
 
-  * Создание, редактирование и удаление документов и распоряжений
-  * Привязка к цехам, типам документов и сотрудникам
- 👥 Учёт сотрудников:
+### 👥 Employee Management
+- Track employees who have/haven't familiarized themselves with documents
+- Monitor employee status (on vacation, active, etc.)
 
-  * Разделение на ознакомившихся и не ознакомившихся с документами
-  * Отслеживание статуса сотрудников (в отпуске, активен и т.д.)
- 🔄 Управление процессами и действиями:
+### 🔄 Process & Action Management
+- Add processes to documents and orders
+- Monitor action completion and deadlines
 
-  * Добавление процессов к документам и распоряжениям
-  * Контроль выполнения действий и сроков
- 📊 Отчёты:
+### 📊 Reporting System
+- Reports on employees who haven't familiarized with documents
+- Reports on incomplete processes
+- Reports on outdated documents
+- Individual employee reports
+- Complete workshop reports
+- **Excel (.xlsx) export** for all reports
 
-  * По не ознакомившимся сотрудникам
-  * По невыполненным процессам
-  * По неактуальным документам
-  * Индивидуальные отчёты по каждому сотруднику
-  * Полный отчёт по цеху
- 📥 Выгрузка отчётов в формате **Excel (xlsx)**
+## 🛠️ Tech Stack
 
----
+- **Python 3.x**
+- **Django 4.x**
+- **OpenPyXL** - Excel report generation
+- **Pandas** - data analysis
 
-## 🛠️ Технологии
+## 🚀 Installation & Setup
 
-* [Python 3.x](https://www.python.org/)
-* [Django 4.x](https://www.djangoproject.com/)
-* [OpenPyXL](https://openpyxl.readthedocs.io/) — для генерации Excel-отчётов
-* [Pandas](https://pandas.pydata.org/) — для анализа данных
-
-
----
- 📦 Установка и запуск
-
- 1️⃣ Клонируйте репозиторий
-
+### 1️⃣ Clone the repository
 ```bash
 git clone https://github.com/<your-username>/autozavod-docs.git
 cd autozavod-docs
-```
-
- 2️⃣ Создайте и активируйте виртуальное окружение
 
 
-python -m venv venv
-source venv/bin/activate   # Linux / macOS
-venv\Scripts\activate      # Windows
-```
+ Implementation Details
+Class-based views for clear and maintainable code
 
-### 3️⃣ Установите зависимости
+Session management for workshop selection
 
-```bash
-pip install -r requirements.txt
-```
+Dynamic Excel report generation using OpenPyXL
 
-### 4️⃣ Настройте базу данных
-
-Примените миграции:
-
-```bash
-python manage.py migrate
-```
-
-### 5️⃣ Создайте суперпользователя
-
-```bash
-python manage.py createsuperuser
-```
-
-### 6️⃣ Запустите сервер разработки
-
-```bash
-python manage.py runserver
-```
-
-Перейдите в браузере: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-
----
-
-## 📂 Структура проекта
-
-```
-autozavod_app/
-├── migrations/
-├── templates/
-│   └── autozavod_app/
-│       ├── show_menu.html
-│       ├── show_docs.html
-│       ├── ...
-├── static/
-├── forms.py
-├── models.py
-├── views.py
-└── urls.py
-```
-
----
-
-## 📝 Особенности реализации
-
-* Использованы **classical views** (функции), что упрощает логику и делает код понятным для начинающих.
-* Сессии применяются для хранения выбранного цеха.
-* Генерация отчётов построена на OpenPyXL — все отчёты создаются на лету и скачиваются пользователем.
-* Логика ознакомления сотрудников реализована через AJAX-запросы (без перезагрузки страницы).
-
-
-MIT License — см. файл [LICENSE](LICENSE).
-
----
-
-Хочешь, чтобы я подготовил для тебя и пример файла `requirements.txt`, основанный на твоём коде?
+AJAX integration for employee familiarization tracking (no page reload)
